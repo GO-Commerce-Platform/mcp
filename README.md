@@ -1,160 +1,285 @@
-# GO-Commerce MCP Server
+# GO-Commerce Model Context Protocol (MCP)
 
-Model Context Protocol server providing intelligent context-aware assistance for GO-Commerce development. The server is designed to work with GO-Commerce's multi-tenant architecture, providing schema management, code generation, and development workflow integrations.
+![Version](https://img.shields.io/badge/version-1.0.0--SNAPSHOT-blue.svg)
+![Quarkus](https://img.shields.io/badge/Quarkus-3.23.4-green.svg)
+![Java](https://img.shields.io/badge/Java-21-orange.svg)
+![Status](https://img.shields.io/badge/status-pre--alpha-red.svg)
 
-## Features
+An AI-first e-commerce interface that enables customers to interact with AI agents for shopping experiences, while store management uses traditional GUIs. The MCP service bridges AI agents (via n8n/Vertex AI) with GO-Commerce backend systems, providing secure, tenant-aware access to product catalogs, inventory, and order processing.
 
-- **Store Management**
-  - Store schema creation and migration
-  - Schema validation and analysis
-  - Multi-tenant context management
+## Table of Contents
 
-- **Query Operations**
-  - Tenant-aware database queries
-  - Safe schema isolation
-  - Query validation and optimization
+- [Architecture](#architecture)
+- [Documentation](#documentation)
+- [Quick Start](#quick-start)
+- [Technology Stack](#technology-stack)
+- [Development](#development)
+- [Testing](#testing)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
 
-- **Code Generation**
-  - Entity and DTO generation
-  - Repository and service templates
-  - Multi-tenant aware code snippets
+## Architecture
 
-- **Model Suggestions**
-  - Schema-based model recommendations
-  - Best practice suggestions
-  - Code pattern analysis
+The MCP service operates as a secure bridge between AI agents and the GO-Commerce ecosystem:
 
-## Prerequisites
+```mermaid
+flowchart TB
+    AI["🤖 AI Host<br/>(Gemini/Claude)"] 
+    
+    subgraph MCP["GO-Commerce MCP Service"]
+        Gateway["🚪 API Gateway<br/>REST/GraphQL + JWT"]
+        Context["🗄️ Data Context Layer<br/>Multi-tenant Access"]
+        Events["⚡ Event Processor<br/>Streaming & Updates"]
+        
+        Gateway --> Context
+        Gateway --> Events
+    end
+    
+    Platform["🏪 GO-Commerce<br/>Platform"]
+    DB["🐘 PostgreSQL<br/>Per-tenant Schemas"]
+    Kafka["📡 Kafka Events<br/>Event Streaming"]
+    
+    AI -.->|"REST/GraphQL + JWT"| Gateway
+    Gateway <-->|"Integrates"| Platform
+    Context <-->|"Reads/Writes"| DB
+    Events <-->|"Streams"| Kafka
+    
+    classDef aiNode fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef mcpNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef extNode fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    
+    class AI aiNode
+    class Gateway,Context,Events mcpNode
+    class Platform,DB,Kafka extNode
+```
 
-- Node.js 18+
-- PostgreSQL 15+
-- Redis 7+
-- GO-Commerce server running locally
+### Core Components
 
-## Installation
+```mermaid
+graph TB
+    A[API Gateway] --> B[Data Context Layer]
+    A --> C[Event Processor]
+    B --> D[Tenant Store]
+    C --> E[Event Stream]
+    
+    subgraph Security
+    F[JWT Auth] --> A
+    G[RBAC] --> A
+    end
+    
+    subgraph "Multi-Tenant Data Access"
+    B --> H[Schema Resolver]
+    B --> I[Query Router]
+    B --> J[Tenant Context Manager]
+    end
+    
+    subgraph "Real-time Updates"
+    C --> K[Kafka Producer]
+    C --> L[Kafka Consumer]
+    C --> M[Cache Invalidation]
+    end
+```
 
-1. Clone the repository:
-   ```bash
-   git clone [mcp-repo-url] gocommerce/mcp
-   ```
+#### Why These Components Are Essential:
 
-2. Install dependencies:
-   ```bash
-   cd gocommerce/mcp
-   npm install
-   ```
+**1. Data Context Layer (DCL)**
+- **Multi-tenant Schema Management**: Each tenant's data lives in a separate PostgreSQL schema (`tenant_{{tenantId}}`)
+- **Context Switching**: Automatically resolves and switches to the correct tenant schema based on JWT claims
+- **Query Routing**: Routes database queries to the appropriate tenant schema without manual intervention
+- **Security Enforcement**: Prevents accidental cross-tenant data access through schema isolation
 
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+**2. Event Processor**
+- **Real-time AI Context**: AI agents need up-to-date information, not stale cached data
+- **Cache Synchronization**: Invalidates cached data when the underlying GO-Commerce data changes
+- **Cross-tenant Updates**: Handles platform-wide events that might affect multiple tenants
+- **Audit Trail**: Tracks all data access and modifications for compliance
+
+**3. API Gateway**
+- **Authentication**: Validates JWT tokens from AI systems
+- **Tenant Resolution**: Extracts tenant ID from JWT and sets context
+- **Rate Limiting**: Prevents AI systems from overwhelming tenant resources
+
+**4. Security Layer**
+- **Zero-trust Architecture**: Every request must be authenticated and authorized
+- **Schema-level Isolation**: PostgreSQL schemas provide strong tenant boundaries
+
+## Documentation
+
+The MCP service documentation is organized as follows:
+
+```mermaid
+graph LR
+    A[docs] --> B[architecture]
+    A --> C[operations]
+    
+    B --> D[adr]
+    B --> E[core-architecture.md]
+    B --> F[database-architecture.md]
+    B --> G[devops-architecture.md]
+    B --> H[security-architecture.md]
+    B --> I[technical-stack.md]
+    
+    D --> J[0000-template.md]
+    D --> K[0001-multi-tenant-pattern.md]
+    D --> L[0002-technology-stack.md]
+    D --> M[0003-security-architecture.md]
+    
+    C --> N[runbooks.md]
+    
+    classDef default fill:#f9f,stroke:#333,stroke-width:2px
+    classDef md fill:#bbf,stroke:#333,stroke-width:2px
+    class E,F,G,H,I,J,K,L,M,N md
+```
+
+### Key Documentation
+
+- [Core Architecture](./docs/architecture/core-architecture.md): System design and components
+- [Technical Stack](./docs/architecture/technical-stack.md): Dependencies and configurations
+- [ADRs](./docs/architecture/adr/): Key architectural decisions
+- [Runbooks](./docs/operations/runbooks.md): Operational procedures
+
+## Quick Start
+
+Get the MCP service running in development mode:
+
+```bash
+# Start required infrastructure
+cd ../docker && docker-compose --env-file .env up -d postgres keycloak-db keycloak
+
+# Run in dev mode with hot reload
+mvn quarkus:dev
+
+# Enable continuous testing
+mvn quarkus:dev -Dquarkus.test.continuous-testing=enabled
+```
+
+### Docker-Based Development
+
+```bash
+# Start complete environment
+cd ../docker && docker-compose --env-file .env up -d mcp
+
+# View logs
+cd ../docker && docker-compose --env-file .env logs -f mcp
+```
+
+## Technology Stack
+
+```mermaid
+mindmap
+  root((MCP Stack))
+    Framework
+      Quarkus 3.23.4
+      Java 21
+    Database
+      PostgreSQL
+      Multi-tenant Schemas
+      Flyway Migrations
+    Security
+      Keycloak
+      JWT
+      OIDC
+    Messaging
+      Kafka
+      Event Streaming
+    Caching
+      Redis
+      Distributed Cache
+    Monitoring
+      OpenTelemetry
+      Prometheus
+      Grafana
+```
 
 ## Development
 
-Start the server in development mode:
+### Prerequisites
+
+- JDK 21+
+- Maven 3.8+
+- Docker & Docker Compose
+- PostgreSQL 15+
+- Keycloak 21+
+
+### Build and Test
+
 ```bash
-npm run dev
+# Build the project
+./mvnw package
+
+# Run tests
+./mvnw test
+
+# Run specific test
+mvn test -Dtest=DataServiceTest
+
+# Run with coverage
+../docker/run-tests.sh mcp-coverage
 ```
 
-Run tests:
-```bash
-npm test
-```
+### Code Style
 
-Build for production:
 ```bash
-npm run build
+# Run checkstyle
+mvn checkstyle:check
 ```
 
 ## Configuration
 
-The MCP server requires the following environment variables:
+Essential configuration properties (see [Configuration Guide](./docs/architecture/core-architecture.md#configuration) for full details):
 
-```env
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASS=postgres
-DB_NAME=gocommerce
+```properties
+# Core settings
+quarkus.application.name=mcp-server
+quarkus.http.port=8080
 
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# Server
-PORT=3000
-NODE_ENV=development
-```
-
-## API Documentation
-
-### Store Operations
-
-- `POST /store/create`
-  - Create new store schema
-  - Body: `{ storeKey: string }`
-
-- `POST /store/migrate`
-  - Run migrations for store
-  - Body: `{ storeKey: string }`
-
-- `POST /store/validate`
-  - Validate store schema
-  - Body: `{ storeKey: string }`
-
-### Query Operations
-
-- `POST /query/execute`
-  - Execute store-specific query
-  - Body: `{ query: string, params?: any[] }`
-
-### Schema Operations
-
-- `POST /schema/analyze`
-  - Analyze store schema structure
-  - Body: `{ storeKey: string }`
-
-### Code Generation
-
-- `POST /code/generate`
-  - Generate code from template
-  - Body: `{ template: string, params: object }`
-
-### Model Operations
-
-- `POST /model/suggest`
-  - Get model suggestions
-  - Body: `{ context: object }`
-
-## Architecture
-
-The MCP server is built with TypeScript and follows a modular architecture:
-
-```
-src/
-├── config/        # Configuration and environment
-├── services/      # Core services (DB, Redis, etc)
-├── handlers/      # Operation handlers
-├── utils/         # Utility functions
-└── types/         # TypeScript type definitions
+# Multi-tenancy
+quarkus.hibernate-orm.multitenant=SCHEMA
+quarkus.hibernate-orm.database.generation=none
 ```
 
 ## Contributing
 
-1. Create feature branch
-2. Make changes
-3. Add tests
-4. Run linting: `npm run lint`
-5. Submit pull request
+```mermaid
+sequenceDiagram
+    participant D as Developer
+    participant G as Git
+    participant T as Tests
+    participant PR as Pull Request
+
+    D->>G: Create feature branch
+    Note over D,G: feature/MCP-123-feature-name
+    
+    rect rgb(200, 220, 255)
+    loop Development
+        D->>D: Code changes
+        D->>T: Run tests locally
+        T-->>D: Test results
+    end
+    end
+    
+    D->>T: Run full test suite
+    Note over T: ../docker/run-tests.sh mcp-all
+    T-->>D: All tests pass
+    
+    D->>G: Commit changes
+    D->>G: Push branch
+    D->>PR: Create pull request
+    
+    Note over PR: Include:
+    Note over PR: - Clear description
+    Note over PR: - Updated docs
+    Note over PR: - Test coverage
+    Note over PR: - Code standards
+```
 
 ## License
 
-MIT License - see LICENSE file
+Copyright (c) 2024 TioDaTI.dev. All rights reserved.
 
-## Related Projects
+For licensing details, see:
+- [COMMERCIAL_LICENSE](../COMMERCIAL_LICENSE) - For commercial use
+- [LICENSE](../LICENSE) - For personal and educational use
 
-- [GO-Commerce Server](../server)
-- [GO-Commerce Documentation](../wiki)
-- [Docker Configurations](../docker)
+// Copilot: This file may have been generated or refactored by GitHub Copilot.
