@@ -1,8 +1,8 @@
 # Issue Migration Mapping
 
 **Migration Date:** 2025-09-03
-**From:** aquele-dinho/GO-Commerce  
-**To:** aquele-dinho/mcp
+**From:** GO-Commerce-Platform/server (formerly aquele-dinho/GO-Commerce)
+**To:** GO-Commerce-Platform/mcp (formerly aquele-dinho/mcp)
 
 ## Migration Summary
 
