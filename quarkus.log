@@ -1,0 +1,18 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< dev.tiodati.saas.gocommerce:mcp >-------------------
+[INFO] Building mcp 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- quarkus:3.26.2:dev (default-cli) @ mcp ---
+[INFO] Invoking resources:3.3.1:resources (default-resources) @ mcp
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Invoking quarkus:3.26.2:generate-code (default) @ mcp
+[INFO] Invoking compiler:3.14.0:compile (default-compile) @ mcp
+[INFO] No sources to compile
+[INFO] Invoking resources:3.3.1:testResources (default-testResources) @ mcp
+[INFO] skip non existing resourceDirectory /Users/aquele_dinho/Projects/gocommerce/mcp/src/test/resources
+[INFO] Invoking quarkus:3.26.2:generate-code-tests (default) @ mcp
+[INFO] Invoking compiler:3.14.0:testCompile (default-testCompile) @ mcp
+[INFO] Nothing to compile - all classes are up to date.

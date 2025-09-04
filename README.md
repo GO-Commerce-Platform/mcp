@@ -21,6 +21,37 @@ An AI-first e-commerce interface that enables customers to interact with AI agen
 
 ## Architecture
 
+```mermaid
+sequenceDiagram
+    participant AI as AI Agent
+    participant API as MCP API Gateway
+    participant SEC as JWT/Tenant Resolver
+    participant DB as PostgreSQL (tenant_*)
+
+    AI->>API: GET /api/v1/products?search=...
+    API->>SEC: Validate JWT, resolve storeId
+    SEC-->>API: storeId -> tenant schema
+    API->>DB: Query products in tenant_{storeId}
+    DB-->>API: Products JSON
+    API-->>AI: 200 OK
+```
+
+```mermaid
+sequenceDiagram
+    participant AI as AI Agent
+    participant API as MCP API Gateway
+    participant SEC as JWT/Tenant Resolver
+    participant DB as PostgreSQL (tenant_*)
+
+    AI->>API: POST /api/v1/carts
+    API->>SEC: Validate JWT, resolve storeId
+    API->>DB: Create cart (tenant_{storeId})
+    API-->>AI: 201 CartDto
+    AI->>API: PUT /api/v1/carts/{id}/items
+    API->>DB: Add/Update item; compute totals on read
+    API-->>AI: 200 CartDto
+```
+
 The MCP service operates as a secure bridge between AI agents and the GO-Commerce ecosystem:
 
 ```mermaid
