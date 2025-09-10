@@ -253,36 +253,52 @@ DataResponse
 
 ---
 
-## 10) Implementation Phases
+## 10) Implementation Phases & Git/GitHub Integration
 
-Phase 1: Core Infrastructure & MT Setup
+**📝 Implementation-GitHub Workflow:**
+Each phase corresponds to GitHub milestones, with individual tasks as GitHub issues. Follow the critical workflow documented in WARP.md:
+
+1. **Never manually close GitHub issues** - let PR merges auto-close them
+2. **Branch naming**: `feature/MCP-{issue-number}-{description}`
+3. **PR linking**: Include "Closes #issue-number" in PR descriptions
+4. **Pre-verification**: Always run `git status` before any issue operations
+
+**Phase-Issue Mapping:**
+See TASKS.md for detailed task-to-issue mapping and status tracking.
+
+**Phase 1: Core Infrastructure & MT Setup**
 - Quarkus skeleton, POM, Dockerfile, dev services
 - TenantResolver + StoreContext
 - Health/metrics, logging, tracing
 - Product query endpoint (GET /data/products) with pagination
 - Integration tests for tenant isolation
+- **GitHub Issues**: #1, #2, #3 (Project Setup, Authentication & Tenant Resolution)
 
-Phase 2: Security & RBAC
+**Phase 2: Security & RBAC**
 - Keycloak integration, JWT filter
 - @RolesAllowed across endpoints
 - Audit logging for data access
 - Negative security tests (unauthorized/forbidden)
+- **GitHub Issues**: Security-related tasks from TASKS.md
 
-Phase 3: Data Layer & Caching
+**Phase 3: Data Layer & Caching**
 - Panache repositories, QueryCriteria builder
 - Redis L2 cache, cache invalidation hooks (Kafka events)
 - Orders/customers endpoints
 - DB migrations and indexes (SKU, orderNumber, email)
+- **GitHub Issues**: #4, #5, #6 (API Endpoints, Data Access, Integration Tests)
 
-Phase 4: MCP Protocol & Events
+**Phase 4: MCP Protocol & Events**
 - Context lifecycle endpoints
 - WebSocket events + Kafka bridging
 - POST /data/search with flexible criteria
 - OpenAPI spec and examples
+- **GitHub Issues**: Context lifecycle and event-related tasks
 
-Phase 5 (optional): Analytics Bridge
+**Phase 5 (optional): Analytics Bridge**
 - Aggregation service or warehouse integration (pgvector/OLAP)
 - /analytics endpoints guarded by privileged roles
+- **GitHub Issues**: #7, #8, #9, #10 (Cart Management, Checkout Integration)
 
 ---
 
