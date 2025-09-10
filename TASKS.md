@@ -9,11 +9,11 @@ Note: Use feature branches per task where practical. Commit with conventional co
 - [x] Update README.md references to PLAN.md and TASKS.md (branch: docs/link-plan-tasks) → commit: "docs: link PLAN.md and TASKS.md in README"
 
 ## 1) Project Skeleton & Configuration
-- [ ] Create Quarkus bootstrap class MCPServerApplication (branch: feat/bootstrap-app) → commit: "feat: add Quarkus bootstrap application"
-- [ ] Add application.properties base config (http port, app name) (branch: feat/base-config) → commit: "feat: add base application properties"
-- [ ] Configure Hibernate multitenancy SCHEMA mode (branch: feat/mt-config) → commit: "feat: enable SCHEMA-based multitenancy"
-- [ ] Add dev profile settings (live reload, swagger-ui) (branch: feat/dev-profile) → commit: "feat: add dev profile configuration"
-- [ ] Add Micrometer Prometheus metrics config (branch: feat/metrics-config) → commit: "feat: enable Prometheus metrics"
+- [x] Create Quarkus bootstrap class MCPServerApplication (branch: feat/bootstrap-app) → commit: "feat: add Quarkus bootstrap application"
+- [x] Add application.properties base config (http port, app name) (branch: feat/base-config) → commit: "feat: add base application properties"
+- [x] Configure Hibernate multitenancy SCHEMA mode (branch: feat/mt-config) → commit: "feat: enable SCHEMA-based multitenancy"
+- [x] Add dev profile settings (live reload, swagger-ui) (branch: feat/dev-profile) → commit: "feat: add dev profile configuration"
+- [x] Add Micrometer Prometheus metrics config (branch: feat/metrics-config) → commit: "feat: enable Prometheus metrics"
 
 ## 2) Tenant Context & Resolver
 - [ ] Implement request-scoped TenantContext holder (branch: feat/tenant-context) → commit: "feat: add TenantContext holder"
