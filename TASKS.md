@@ -26,10 +26,10 @@ Each task is a single, minimal, independently implementable unit of work. Tasks 
 - [x] Add Micrometer Prometheus metrics config (branch: feat/metrics-config) → commit: "feat: enable Prometheus metrics"
 
 ## 2) Tenant Context & Resolver **→ GitHub Issue: #3 🔄 OPEN**
-- [ ] Implement request-scoped TenantContext holder (branch: feat/tenant-context) → commit: "feat: add TenantContext holder"
-- [ ] Implement UnifiedTenantResolver (resolve storeId → schema) (branch: feat/tenant-resolver) → commit: "feat: implement UnifiedTenantResolver"
-- [ ] Map tenantId to schema naming convention (store_<slug>) (branch: feat/tenant-schema-map) → commit: "feat: map tenantId to schema"
-- [ ] Add unit/integration tests for tenant resolution (branch: test/tenant-resolution) → commit: "test: add tenant resolution tests"
+- [x] Implement request-scoped TenantContext holder (branch: feat/tenant-context) → commit: "feat: add TenantContext holder"
+- [x] Implement UnifiedTenantResolver (resolve storeId → schema) (branch: feat/tenant-resolver) → commit: "feat: implement UnifiedTenantResolver"
+- [x] Map tenantId to schema naming convention (store_<slug>) (branch: feat/tenant-schema-map) → commit: "feat: map tenantId to schema"
+- [x] Add unit/integration tests for tenant resolution (branch: test/tenant-resolution) → commit: "test: add tenant resolution tests"
 
 ## 3) Security & RBAC **→ GitHub Issue: #11 🔄 OPEN**
 - [ ] Configure Keycloak OIDC resource server (branch: feat/keycloak-config) → commit: "feat: configure Keycloak OIDC"
