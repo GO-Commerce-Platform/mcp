@@ -5,8 +5,8 @@ Each task is a single, minimal, independently implementable unit of work. Check 
 Note: Use feature branches per task where practical. Commit with conventional commits, reference the task name, and open PRs as needed.
 
 ## 0) Git Sync and Housekeeping
-- [ ] Add PLAN.md and TASKS.md to Git (branch: chore/add-plan-tasks) → commit: "chore: add PLAN.md and TASKS.md"
-- [ ] Update README.md references to PLAN.md and TASKS.md (branch: docs/link-plan-tasks) → commit: "docs: link PLAN.md and TASKS.md in README"
+- [x] Add PLAN.md and TASKS.md to Git (branch: chore/add-plan-tasks) → commit: "chore: add PLAN.md and TASKS.md"
+- [x] Update README.md references to PLAN.md and TASKS.md (branch: docs/link-plan-tasks) → commit: "docs: link PLAN.md and TASKS.md in README"
 
 ## 1) Project Skeleton & Configuration
 - [ ] Create Quarkus bootstrap class MCPServerApplication (branch: feat/bootstrap-app) → commit: "feat: add Quarkus bootstrap application"
