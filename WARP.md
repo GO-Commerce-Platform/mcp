@@ -66,10 +66,33 @@ mvn checkstyle:check
 
 ## Development Workflow
 
+### Git/GitHub Workflow (CRITICAL)
+
+**🚨 NEVER manually close GitHub issues!** Follow this strict workflow:
+
+**Required Workflow Order:**
+1. `git checkout -b feature/MCP-{issue-number}-{description}`
+2. Implement changes and commit with conventional commits
+3. `git push origin feature/MCP-{issue-number}-{description}`
+4. Create Pull Request with "Closes #issue-number" in description
+5. Review and merge PR
+6. Issue auto-closes when PR merges
+
+**Critical Rules:**
+- ✅ **Always check** `git status` before any `gh issue close` command
+- ✅ **Use branch naming**: `feature/MCP-{issue-number}-{description}`
+- ✅ **Link PRs properly**: Include "Closes #issue-number" in PR description
+- ✅ **Never manually close**: Let PRs auto-close issues when merged
+- ✅ **Commit traceability**: All code changes must be committed before issue closure
+- ✅ **Reference issues**: Use conventional commits with issue references
+
+**Emergency Recovery:** If an issue is closed prematurely, immediately commit changes, create PR, and reference the closed issue.
+
 ### Feature Development
 
 1. **Branch Creation**
     ```bash
+    # Always reference the GitHub issue number
     git checkout -b feature/MCP-123-feature-name
     ```
 

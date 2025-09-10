@@ -1,0 +1,72 @@
+# Development environment configuration for GO-Commerce MCP service
+version: '3.8'
+
+services:
+  mcp-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.jvm
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Debug port
+    environment:
+      - QUARKUS_PROFILE=dev
+      - JAVA_ENABLE_DEBUG=true
+      - JAVA_DEBUG_PORT=*:5005
+      - DB_USER=gocommerce
+      - DB_PASSWORD=gocommerce
+      - ENVIRONMENT=development
+    volumes:
+      - ./logs:/deployments/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health/ready"\]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: gocommerce
+      POSTGRES_USER: gocommerce
+      POSTGRES_PASSWORD: gocommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gocommerce -d gocommerce"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -11,6 +11,8 @@ An AI-first e-commerce interface that enables customers to interact with AI agen
 
 - [Architecture](#architecture)
 - [Documentation](#documentation)
+  - [Core Documentation](#core-documentation)
+  - [Architecture Documentation](#architecture-documentation)
 - [Quick Start](#quick-start)
 - [Technology Stack](#technology-stack)
 - [Development](#development)
@@ -48,7 +50,7 @@ sequenceDiagram
     API->>DB: Create cart (tenant_{storeId})
     API-->>AI: 201 CartDto
     AI->>API: PUT /api/v1/carts/{id}/items
-    API->>DB: Add/Update item; compute totals on read
+    API->>DB: Add/Update item, compute totals on read
     API-->>AI: 200 CartDto
 ```
 
@@ -137,7 +139,17 @@ graph TB
 
 ## Documentation
 
-The MCP service documentation is organized as follows:
+The MCP service documentation follows a **Specs-Driven Development (SDD)** approach:
+
+### Core Documentation
+
+- **[WARP.md](./WARP.md)**: High-level service specification and requirements
+- **[PLAN.md](./PLAN.md)**: Detailed technical implementation plan
+- **[TASKS.md](./TASKS.md)**: Granular task checklist with 120+ actionable items
+
+### Architecture Documentation
+
+The detailed architecture documentation is organized as follows:
 
 ```mermaid
 graph LR
@@ -165,6 +177,9 @@ graph LR
 
 ### Key Documentation
 
+- [WARP.md](./WARP.md): Service specification and developer guidance
+- [PLAN.md](./PLAN.md): Complete technical implementation blueprint
+- [TASKS.md](./TASKS.md): Actionable development checklist
 - [Core Architecture](./docs/architecture/core-architecture.md): System design and components
 - [Technical Stack](./docs/architecture/technical-stack.md): Dependencies and configurations
 - [ADRs](./docs/architecture/adr/): Key architectural decisions
@@ -224,6 +239,15 @@ mindmap
 ```
 
 ## Development
+
+### Development Approach
+
+This project follows a **Specs-Driven Development (SDD)** methodology:
+
+1. **Specification** ([WARP.md](./WARP.md)): High-level requirements and architecture
+2. **Planning** ([PLAN.md](./PLAN.md)): Technical implementation blueprint
+3. **Task Breakdown** ([TASKS.md](./TASKS.md)): Granular, actionable checklist
+4. **Implementation**: Task-by-task development with Git workflow
 
 ### Prerequisites
 
